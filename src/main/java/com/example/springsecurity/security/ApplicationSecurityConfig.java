@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+import static com.example.springsecurity.security.ApplicationUserRole.*;
+
 @Configuration
 @EnableWebSecurity
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -26,25 +28,45 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .csrf().disable() // I will explain later
                 .authorizeRequests()
-                .antMatchers("/", "index", "/css/*", "/js/*")
-                .permitAll()
+                // must not authentication when / , index , css , js
+                .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
+                .antMatchers("/api/**").hasRole(STUDENT.name())
                 .anyRequest()
                 .authenticated()
                 .and()
+                // use basic auth
                 .httpBasic();
     }
 
     @Override
     @Bean
     protected UserDetailsService userDetailsService() {
+
+        // create user 'viettq' with STUDENT role
         UserDetails anaSmithUser = User.builder()
                 .username("viettq")
-                .password(passwordEncoder.encode("password"))
-                .roles("STUDENT") // ROLE_STUDENT
+                .password(passwordEncoder.encode("1"))
+                .roles(STUDENT.name()) // ROLE_STUDENT
+                .build();
+        // create user 'admin' with ADMIN role
+        UserDetails lindaUser = User.builder()
+                .username("linda")
+                .password(passwordEncoder.encode("1"))
+                .roles(ADMIN.name()) // role admin
+                .build();
+
+        // create user 'admin' with ADMIN role
+        UserDetails tomUser = User.builder()
+                .username("tom")
+                .password(passwordEncoder.encode("1"))
+                .roles(ADMINTRAINEE.name()) // role admintrainee
                 .build();
         return new InMemoryUserDetailsManager(
-                anaSmithUser
+                anaSmithUser,
+                lindaUser,
+                tomUser
         );
     }
 }

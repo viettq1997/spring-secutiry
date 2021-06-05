@@ -8,4 +8,12 @@ import lombok.Data;
 public class Student {
     private Integer studentId;
     private String studentName;
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "studentId=" + studentId +
+                ", studentName='" + studentName + '\'' +
+                '}';
+    }
 }
