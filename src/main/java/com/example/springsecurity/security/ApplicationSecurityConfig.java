@@ -57,13 +57,18 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 // enable form base auth
                 .formLogin()
                 // custom login page -> controller not RestController
-                .loginPage("/login").permitAll()
-                // set default redirect after success login
-                .defaultSuccessUrl("/courses", true)
+                    .loginPage("/login").permitAll()
+                    // set default redirect after success login
+                    .defaultSuccessUrl("/courses", true)
+                    // password and user (name in html)
+                    .passwordParameter("password")
+                    .usernameParameter("username")
                 .and()
                 .rememberMe() //defaults to 2 weeks
                     .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))
                     .key("somethingverysecured")
+                    // remember me (name in html)
+                    .rememberMeParameter("remember-me")
                 .and()
                 // logout
                 .logout()
